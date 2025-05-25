@@ -56,7 +56,7 @@ const RouteNavigation = () => {
             variant='ghost'
             roundedBottom={1}
             h='full'
-            to={`https://kackyreloaded.com/event/editions/ranking.php?edition=5`}
+            to={`https://kackiestkacky.com/event/editions/ranking.php?edition=10`}
             flexDirection={{ base: 'column', lg: 'row' }}
             _activeLink={{
               bg: colorMode === 'dark' ? 'whiteAlpha.100' : 'blackAlpha.100',

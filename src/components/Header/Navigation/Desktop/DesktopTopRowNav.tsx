@@ -14,9 +14,9 @@ import { IMAGES } from '@/utils/Images';
 const DesktopTopRowNav = () => {
   const { colorMode } = useColorMode();
   const logoSize = useBreakpointValue({
-    base: '120px',
-    md: '200px',
-    lg: '220px',
+    base: '100px',
+    md: '150px',
+    lg: '170px',
   });
   return (
     <HStack justify='space-between' w='full' py={2}>
@@ -44,11 +44,11 @@ const DesktopTopRowNav = () => {
             transition: 'transform 0.2s ease-in-out', // Combine all transition properties
           }}
         >
-          {/* <KrLogo2023
+          <KrLogo2023
             color={colorMode === 'dark' ? 'white' : 'black'}
             width={logoSize}
-          /> */}
-          <Image objectFit='contain' src={IMAGES.kr5small} width='150px' />
+          />
+          {/* <Image objectFit='contain' src={IMAGES.kr5small} width='150px' /> */}
         </Box>
       </Box>
       <UserNavigation />

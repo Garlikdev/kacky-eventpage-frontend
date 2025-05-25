@@ -25,10 +25,7 @@ const HotbarCard = ({ serverNumber, maps, timeLimit, timeLeft }) => {
 
   return (
     <Box
-      bgImage={`url(${getMapImageUrl(
-        event.type,
-        maps[0].number
-      )}), url(${mapImageFallback})`}
+      bgImage={`url(${getMapImageUrl(event.type, maps[0].number)})`}
       bgPosition='center'
       bgRepeat='no-repeat'
       bgSize='cover'

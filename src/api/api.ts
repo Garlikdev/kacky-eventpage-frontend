@@ -71,6 +71,13 @@ export async function registerUser(data: RegisterUserFormSchema): Promise<any> {
 
 export async function eventLiveState(): Promise<EventStatus> {
   const response = await fetch(`${url}/eventstatus`);
+  // Return static data for now
+  // return {
+  //   edition: 10,
+  //   status: 'active',
+  //   type: 'KK',
+  //   start: new Date('2025-05-24T18:00:00Z'), // 24 May 2025, 18:00 UTC
+  // };
   return response.json();
 }
 

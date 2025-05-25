@@ -28,6 +28,7 @@ const CompactServerList = ({
   serverDifficulty,
   maps,
   timeLeft,
+  playerCount,
   serverJoin,
   isSuccess,
 }: Server) => {
@@ -233,7 +234,7 @@ const CompactServerList = ({
             justify='space-between'
             position='relative'
             w='full'
-            px={{ base: 3, md: 4 }}
+            px={{ base: 2, md: 3 }}
             bgColor={`${
               colorMode === 'dark'
                 ? getDefaultBackgrounds().dark[0]
@@ -256,7 +257,7 @@ const CompactServerList = ({
           /> */}
             {serverDifficulty !== '' ? ( // Servers do not have a difficulty in Phase 1
               <Badge
-                w={'1rem'}
+                w={'0.5rem'}
                 h={'100%'}
                 left={0}
                 position={'absolute'}
@@ -266,11 +267,11 @@ const CompactServerList = ({
                 variant={diffBadgeColorArr[serverDifficulty].variant}
               ></Badge>
             ) : null}
-            <HStack gap={4} pl={2}>
+            <HStack gap={2} pl={1}>
               <Box position='relative' alignContent={'center'} w={'3rem'}>
                 <Text
                   fontWeight='medium'
-                  fontSize={'2xl'}
+                  fontSize={'xl'}
                   rounded='full'
                   filter={timeLeft < 1 ? 'grayscale(100%)' : 'grayscale(0%)'}
                   transition='transform 1s ease-in-out'
@@ -286,140 +287,130 @@ const CompactServerList = ({
                 textTransform='initial'
               >
                 <AnimatePresence mode='wait'>
-                  {timeLeft <= 0 ? (
-                    <motion.div
-                      key={'mapnumberloadingserver'}
-                      initial={{ opacity: 0 }} // Start with 0 opacity
-                      animate={{
-                        opacity: 1,
-                      }}
-                      exit={{
-                        opacity: 0,
-                      }}
-                      transition={{ ease: 'easeInOut', duration: 0.3 }}
-                    >
-                      <Text
-                        as='span'
-                        fontWeight='bold'
-                        color={colorMode === 'dark' ? 'blue.500' : 'blue.500'}
-                        filter={
-                          colorMode === 'dark'
-                            ? theme.shadows.dropGlowDark
-                            : theme.shadows.dropGlow
-                        }
+                  {isSuccess ? (
+                    // Show loading only when timer exists AND is less than 3
+                    timeLeft !== undefined &&
+                    timeLeft !== null &&
+                    timeLeft < 3 ? (
+                      <motion.div
+                        key={'mapnumberloadingserver'}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ ease: 'easeInOut', duration: 0.3 }}
                       >
-                        Loading {maps[1].number} ...
-                      </Text>
-                    </motion.div>
-                  ) : (
-                    <>
-                      {isSuccess && (
-                        <motion.div
-                          key={'mapnumberready'}
-                          initial={{ opacity: 0 }} // Start with 0 opacity
-                          animate={{
-                            opacity: 1,
-                          }}
-                          exit={{
-                            opacity: 0,
-                          }}
-                          transition={{ ease: 'easeInOut', duration: 0.3 }}
+                        <Text
+                          as='span'
+                          fontWeight='bold'
+                          fontSize={{ base: 'sm', md: 'lg' }}
+                          color={colorMode === 'dark' ? 'blue.500' : 'blue.500'}
+                          filter={
+                            colorMode === 'dark'
+                              ? theme.shadows.dropGlowDark
+                              : theme.shadows.dropGlow
+                          }
                         >
-                          <HStack
-                            // fontWeight='thin'
-                            gap={3}
+                          Loading {maps[1]?.number ?? ''} ...
+                        </Text>
+                      </motion.div>
+                    ) : (
+                      // Show maps when timer is >= 3 OR timer is unknown/undefined
+                      <motion.div
+                        key={'mapnumberready'}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ ease: 'easeInOut', duration: 0.3 }}
+                      >
+                        <HStack
+                          gap={{ base: '0', md: '1' }}
+                          color={
+                            colorMode === 'dark' ? 'neutral.100' : 'neutral.900'
+                          }
+                          align='end'
+                          alignItems='center'
+                          fontSize={{ base: 'xl', md: '2xl' }}
+                          onClick={onOpen}
+                          cursor='pointer'
+                          position='relative'
+                          _hover={{ transform: 'scale(1.05)' }}
+                          transition='transform 0.1s ease-in-out'
+                        >
+                          <Text
+                            as='span'
+                            fontWeight='bold'
                             color={
-                              colorMode === 'dark'
-                                ? 'neutral.100'
-                                : 'neutral.900'
+                              maps[0].finished
+                                ? colorMode === 'dark'
+                                  ? 'green.300'
+                                  : 'green.500'
+                                : ''
                             }
-                            align='end'
-                            alignItems='center'
-                            fontSize={'2xl'}
-                            onClick={onOpen}
-                            cursor='pointer'
-                            position='relative'
-                            _hover={{ transform: 'scale(1.05)' }}
-                            transition='transform 0.1s ease-in-out'
-                          >
-                            {/* <Text as='span'>Map</Text> */}
-                            <Text
-                              as='span'
-                              fontWeight='bold'
-                              color={
-                                maps[0].finished
-                                  ? colorMode === 'dark'
-                                    ? 'green.300'
-                                    : 'green.500'
-                                  : ''
-                              }
-                              filter={
-                                maps[0].finished
-                                  ? colorMode === 'dark'
-                                    ? theme.shadows.finGlowDark
-                                    : theme.shadows.finGlowLight
-                                  : colorMode === 'dark'
-                                    ? theme.shadows.dropGlowDark
-                                    : theme.shadows.dropGlow
-                              }
-                            >
-                              {maps[0].number}
-                            </Text>
-                            <MdOutlineArrowRight
-                              fontWeight='bold'
-                              filter={
-                                colorMode === 'dark'
-                                    ? theme.shadows.dropGlowDark
-                                    : theme.shadows.dropGlow
-                              }
-                            >
-                            </MdOutlineArrowRight>
-                            <Text
-                              as='span'
-                              fontWeight='bold'
-                              color={
-                                maps[1].finished
-                                  ? colorMode === 'dark'
-                                    ? 'green.300'
-                                    : 'green.500'
-                                  : ''
-                              }
-                              filter={
-                                maps[1].finished
-                                  ? colorMode === 'dark'
-                                    ? theme.shadows.finGlowDark
-                                    : theme.shadows.finGlowLight
-                                  : colorMode === 'dark'
-                                    ? theme.shadows.dropGlowDark
-                                    : theme.shadows.dropGlow
-                              }
-                            >
-                              {maps[1].number}
-                            </Text>
-                            <Text
-                              fontSize='xs'
-                              position={{base: 'absolute'}}
-                              top={{base: '1.8rem'}}
-                              display={{ base: 'none', sm: 'block' }}
-                              filter={
-                                colorMode === 'dark'
+                            filter={
+                              maps[0].finished
+                                ? colorMode === 'dark'
+                                  ? theme.shadows.finGlowDark
+                                  : theme.shadows.finGlowLight
+                                : colorMode === 'dark'
                                   ? theme.shadows.dropGlowDark
                                   : theme.shadows.dropGlow
-                              }
-                            >
-                              {maps[0].author}
-                            </Text>
-                          </HStack>
-                        </motion.div>
-                      )}
-                    </>
-                  )}
+                            }
+                          >
+                            {maps[0].number}
+                          </Text>
+                          <MdOutlineArrowRight
+                            fontWeight='bold'
+                            filter={
+                              colorMode === 'dark'
+                                ? theme.shadows.dropGlowDark
+                                : theme.shadows.dropGlow
+                            }
+                          />
+                          <Text
+                            as='span'
+                            fontWeight='bold'
+                            color={
+                              maps[1].finished
+                                ? colorMode === 'dark'
+                                  ? 'green.300'
+                                  : 'green.500'
+                                : ''
+                            }
+                            filter={
+                              maps[1].finished
+                                ? colorMode === 'dark'
+                                  ? theme.shadows.finGlowDark
+                                  : theme.shadows.finGlowLight
+                                : colorMode === 'dark'
+                                  ? theme.shadows.dropGlowDark
+                                  : theme.shadows.dropGlow
+                            }
+                          >
+                            {maps[1].number}
+                          </Text>
+                          <Text
+                            fontSize='xs'
+                            position={{ base: 'absolute' }}
+                            top={{ base: '1.8rem' }}
+                            display={{ base: 'none', sm: 'block' }}
+                            filter={
+                              colorMode === 'dark'
+                                ? theme.shadows.dropGlowDark
+                                : theme.shadows.dropGlow
+                            }
+                          >
+                            {maps[0].author}
+                          </Text>
+                        </HStack>
+                      </motion.div>
+                    )
+                  ) : null}
                 </AnimatePresence>
               </VStack>
             </HStack>
             <HStack
               w='fit-content'
-              gap={4}
+              gap={{ base: '2', md: '4' }}
               justify='space-between'
               textTransform='initial'
             >
@@ -493,61 +484,6 @@ const CompactServerList = ({
                   </motion.div>
                 )}
               </HStack>
-
-              <VStack display={{ base: 'none', md: 'flex' }}>
-                <AnimatePresence mode='wait'>
-                  <motion.div
-                    key={'mapjoinloading'}
-                    initial={{ opacity: 0 }} // Start with 0 opacity
-                    animate={{
-                      opacity: 1,
-                    }}
-                    exit={{
-                      opacity: 0,
-                    }}
-                    transition={{ ease: 'easeInOut', duration: 0.3 }}
-                  >
-                    <Flex
-                      gap={0}
-                      textColor={colorMode === 'dark' ? 'white' : 'black'}
-                    >
-                      {serverJoin && (
-                        <Button
-                          as={NavLink}
-                          to={`${serverJoin}`}
-                          position='relative'
-                          w='fit'
-                          fontSize={'xs'}
-                          h='2rem'
-                          p={1}
-                          _hover={{
-                            bg:
-                              colorMode === 'dark'
-                                ? 'neutral.700 !important'
-                                : 'neutral.300 !important',
-                          }}
-                          fontWeight='bold'
-                          bg={
-                            colorMode === 'dark'
-                              ? 'neutral.800 !important'
-                              : 'neutral.200 !important'
-                          }
-                          textAlign='center'
-                          alignItems={'center'}
-                          justifyContent={'center'}
-                          filter={
-                            colorMode === 'dark'
-                              ? theme.shadows.dropGlowDark
-                              : theme.shadows.dropGlow
-                          }
-                        >
-                          Join
-                        </Button>
-                      )}
-                    </Flex>
-                  </motion.div>
-                </AnimatePresence>
-              </VStack>
               <VStack>
                 <AnimatePresence mode='wait'>
                   <motion.div
@@ -605,6 +541,89 @@ const CompactServerList = ({
                         </Fragment>
                       ))}
                     </VStack>
+                  </motion.div>
+                </AnimatePresence>
+              </VStack>
+              <VStack width={'3rem'}>
+                <AnimatePresence mode='wait'>
+                  <motion.div
+                    key={'playercountloadingnext'}
+                    initial={{ opacity: 0 }} // Start with 0 opacity
+                    animate={{
+                      opacity: 1,
+                    }}
+                    exit={{
+                      opacity: 0,
+                    }}
+                    transition={{ ease: 'easeInOut', duration: 0.3 }}
+                  >
+                    <Text
+                      fontWeight={'bold'}
+                      transition='transform 0.1s ease-in-out'
+                      color={
+                        playerCount > 90
+                          ? 'red.400'
+                          : playerCount > 49
+                            ? 'yellow.400'
+                            : colorMode === 'dark'
+                              ? 'green.300'
+                              : 'green.500'
+                      }
+                    >
+                      {playerCount}/100
+                    </Text>
+                  </motion.div>
+                </AnimatePresence>
+                <AnimatePresence mode='wait'>
+                  <motion.div
+                    key={'mapjoinloading'}
+                    initial={{ opacity: 0 }} // Start with 0 opacity
+                    animate={{
+                      opacity: 1,
+                    }}
+                    exit={{
+                      opacity: 0,
+                    }}
+                    transition={{ ease: 'easeInOut', duration: 0.3 }}
+                  >
+                    <Flex
+                      gap={0}
+                      textColor={colorMode === 'dark' ? 'white' : 'black'}
+                    >
+                      {serverJoin && (
+                        <Button
+                          as={NavLink}
+                          to={`${serverJoin}`}
+                          position='relative'
+                          w='fit'
+                          fontSize={'xs'}
+                          h='2rem'
+                          p={1}
+                          _hover={{
+                            bg:
+                              colorMode === 'dark'
+                                ? 'neutral.700 !important'
+                                : 'neutral.300 !important',
+                          }}
+                          fontWeight='bold'
+                          bg={
+                            colorMode === 'dark'
+                              ? 'neutral.800 !important'
+                              : 'neutral.200 !important'
+                          }
+                          textAlign='center'
+                          alignItems={'center'}
+                          justifyContent={'center'}
+                          filter={
+                            colorMode === 'dark'
+                              ? theme.shadows.dropGlowDark
+                              : theme.shadows.dropGlow
+                          }
+                        >
+                          Join
+                        </Button>
+                      )}
+                    </Flex>
                   </motion.div>
                 </AnimatePresence>
               </VStack>

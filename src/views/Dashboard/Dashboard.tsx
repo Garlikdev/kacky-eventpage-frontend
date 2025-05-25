@@ -25,8 +25,6 @@ import { IMAGES } from '@/utils/Images';
 import CompactServerList from '@/components/ServerWidgets/CompactServerList';
 import { Duration } from 'luxon';
 
-const mapChangeEstimate = 0;
-
 const Dashboard = () => {
   const newQueryCount = useRef([0]);
   const { colorMode } = useColorMode();
@@ -64,7 +62,7 @@ const Dashboard = () => {
     queryKey: ['servers', authentication.token],
     queryFn: () => getDashboardData(authentication.token),
     refetchOnWindowFocus: true,
-    refetchInterval: 30000,
+    refetchInterval: 10000,
     retry: true,
     enabled: isApiSuccess,
   });
@@ -82,14 +80,15 @@ const Dashboard = () => {
       const formattedData: Server[] = [];
 
       data.servers.forEach((server: Server) => {
-        timeLeftArr.push(server.timeLeft + mapChangeEstimate);
+        timeLeftArr.push(server.timeLeft);
         const formattedServer: Server = {
           serverNumber: server.serverNumber,
           maps: server.maps,
           serverDifficulty: server.serverDifficulty,
           serverJoin: server.serverJoin || '',
+          playerCount: server.playerCount,
           timeLimit: server.timeLimit * 60,
-          timeLeft: server.timeLeft + mapChangeEstimate, // Update timeLeft here
+          timeLeft: server.timeLeft,
           isLoading: isLoading,
           isSuccess: isSuccess,
         };
@@ -214,6 +213,15 @@ const Dashboard = () => {
                     </Text>
                   )}
                 </HStack>
+                <HStack align='center' gap={2}>
+                  <Text>Total players:</Text>
+                  <Text fontWeight={'bold'}>
+                    {servers.reduce(
+                      (sum, server) => sum + server.playerCount,
+                      0
+                    )}
+                  </Text>
+                </HStack>
               </Flex>
             </Box>
             <Box justifyContent='center' alignContent='center' w='full' gap={0}>
@@ -225,13 +233,22 @@ const Dashboard = () => {
                 >
                   Active now
                 </Text>
-                <Text
-                  fontSize='sm'
-                  fontWeight='light'
-                  color={colorMode === 'dark' ? 'neutral.400' : 'neutral.700'}
-                >
-                  Next maps
-                </Text>
+                <HStack spacing={4} align='center'>
+                  <Text
+                    fontSize='sm'
+                    fontWeight='light'
+                    color={colorMode === 'dark' ? 'neutral.400' : 'neutral.700'}
+                  >
+                    Next maps
+                  </Text>
+                  <Text
+                    fontSize='sm'
+                    fontWeight='light'
+                    color={colorMode === 'dark' ? 'neutral.400' : 'neutral.700'}
+                  >
+                    Players
+                  </Text>
+                </HStack>
               </HStack>
               {isLoading ? (
                 <>
@@ -268,7 +285,7 @@ const Dashboard = () => {
                     <Fragment key={server.serverNumber}>
                       <CompactServerList
                         {...server}
-                        timeLeft={counter[idx] - mapChangeEstimate}
+                        timeLeft={counter[idx]}
                         isLoading={isLoading}
                         isSuccess={isSuccess}
                       />

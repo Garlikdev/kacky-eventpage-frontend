@@ -57,6 +57,7 @@ type Server = {
   serverDifficulty: string;
   serverJoin: string;
   maps: ServerMap[];
+  playerCount: number;
   timeLimit: number;
   timeLeft: number;
   isSuccess: boolean;

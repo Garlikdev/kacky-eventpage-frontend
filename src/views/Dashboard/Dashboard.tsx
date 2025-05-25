@@ -199,7 +199,7 @@ const Dashboard = () => {
             >
               <Flex justify='space-between' align='center'>
                 <HStack align='center'>
-                  <Image h='2rem' src={IMAGES.kr5battery} />
+                  {/* <Image h='2rem' src={IMAGES.kr5battery} /> */}
                   {event.type === 'kr' ? (
                     <Text fontWeight='bold' fontSize='1.2rem'>
                       Kacky Reloaded {event.edition}

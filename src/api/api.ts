@@ -317,6 +317,16 @@ export async function getMapFins(playerName: string): Promise<MapFinsResponse> {
 export function getMapImageUrl(eventType: string, mapNumber: number): string {
   // Remove "[v2]" and similar (assuming only spaces separate version info)
   const cleanedMapNumber = mapNumber.toString().split(' ')[0];
+  const imageUrl = `https://static.kacky.gg/${eventType}/thumbs/${cleanedMapNumber}.jpg`;
+  return imageUrl;
+}
+
+export function getDashMapImageUrl(
+  eventType: string,
+  mapNumber: number
+): string {
+  // Remove "[v2]" and similar (assuming only spaces separate version info)
+  const cleanedMapNumber = mapNumber.toString().split(' ')[0];
   const imageUrl = `https://static.kacky.gg/${eventType}/thumbs/${cleanedMapNumber}.webp`;
   return imageUrl;
 }

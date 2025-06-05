@@ -18,7 +18,7 @@ import { DateTime } from 'luxon';
 import { MdOutlineCheckCircle } from 'react-icons/md';
 import MapImageModal from '@/components/MapImageModal';
 
-import { getMapImageUrl } from '@/api/api';
+import { getDashMapImageUrl } from '@/api/api';
 // import mapImageFallback from '@/assets/images/mapImageFallback.jpg';
 import EventContext from '@/context/EventContext';
 import { diffBadgeColorArr, getDefaultBackgrounds } from '@/utils/theme';
@@ -44,7 +44,7 @@ const ServerCard = ({
 
   const nextMapModals = [modalNextMap1, modalNextMap2, modalNextMap3];
 
-  const imageUrl = getMapImageUrl(event.type, maps[0].number);
+  const imageUrl = getDashMapImageUrl(event.type, maps[0].number);
 
   return (
     <Box

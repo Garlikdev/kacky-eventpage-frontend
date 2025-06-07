@@ -5,12 +5,10 @@ import {
   Center,
   Flex,
   HStack,
-  Image,
   Text,
   Divider,
   VStack,
   Spinner,
-  Link,
 } from '@chakra-ui/react';
 import { useEffect, useState, useContext, useRef, Fragment } from 'react';
 import { useQuery } from '@tanstack/react-query';
@@ -21,9 +19,7 @@ import { getDashboardData } from '@/api/api';
 import AuthContext from '@/context/AuthContext';
 import EventContext from '@/context/EventContext';
 import { getDefaultBackgrounds } from '@/utils/theme';
-import { IMAGES } from '@/utils/Images';
 import CompactServerList from '@/components/ServerWidgets/CompactServerList';
-import { Duration } from 'luxon';
 
 const Dashboard = () => {
   const newQueryCount = useRef([0]);
@@ -35,36 +31,36 @@ const Dashboard = () => {
   const [servers, setServers] = useState<Server[]>([]);
   const [counter, setCounter] = useState([0]);
 
-  const fetchWithTimeout = (url: string, timeout = 3000) => {
-    return Promise.race([
-      fetch(url),
-      new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Timeout')), timeout)
-      ),
-    ]);
-  };
+  // const fetchWithTimeout = (url: string, timeout = 3000) => {
+  //   return Promise.race([
+  //     fetch(url),
+  //     new Promise((_, reject) =>
+  //       setTimeout(() => reject(new Error('Timeout')), timeout)
+  //     ),
+  //   ]);
+  // };
 
-  // Check if api is up twice before showing error
-  const {
-    isError: isApiError,
-    isSuccess: isApiSuccess,
-    isLoading: isApiLoading,
-  } = useQuery({
-    queryKey: ['apistatusrecords'],
-    queryFn: () =>
-      fetchWithTimeout('https://api.kacky.gg/records/leaderboard/kr/321'),
-    retry: 1,
-    retryDelay: 1000,
-  });
+  // // Check if api is up twice before showing error
+  // const {
+  //   isError: isApiError,
+  //   isSuccess: isApiSuccess,
+  //   isLoading: isApiLoading,
+  // } = useQuery({
+  //   queryKey: ['apistatusrecords'],
+  //   queryFn: () =>
+  //     fetchWithTimeout('https://api.kacky.gg/records/leaderboard/kr/321'),
+  //   retry: 1,
+  //   retryDelay: 1000,
+  //   refetchInterval: 30000,
+  // });
 
   // Fetch servers data
-  const { data, isSuccess, isLoading } = useQuery({
+  const { data, isSuccess, isLoading, isError } = useQuery({
     queryKey: ['servers', authentication.token],
     queryFn: () => getDashboardData(authentication.token),
     refetchOnWindowFocus: true,
-    refetchInterval: 10000,
+    refetchInterval: 30000,
     retry: true,
-    enabled: isApiSuccess,
   });
 
   // Timer for days left till comp end
@@ -121,7 +117,7 @@ const Dashboard = () => {
     }
   }, [counter]);
 
-  if (isApiLoading) {
+  if (isLoading) {
     return (
       <Center>
         <Spinner />
@@ -129,7 +125,7 @@ const Dashboard = () => {
     );
   }
 
-  if (isApiError) {
+  if (isError) {
     return (
       <Center>
         <VStack>
@@ -141,7 +137,7 @@ const Dashboard = () => {
     );
   }
 
-  if (isApiSuccess && isSuccess) {
+  if (isSuccess) {
     return (
       <motion.div
         initial={{ opacity: 0 }}
@@ -190,7 +186,7 @@ const Dashboard = () => {
             shadow='md'
           >
             <Box
-              py={3}
+              py={1}
               px={{ base: 3, md: 4 }}
               bg={colorMode === 'dark' ? 'neutral.800' : 'neutral.200'}
               w='full'
@@ -225,7 +221,7 @@ const Dashboard = () => {
               </Flex>
             </Box>
             <Box justifyContent='center' alignContent='center' w='full' gap={0}>
-              <HStack justify='space-between' px={{ base: 3, md: 4 }} py={2}>
+              <HStack justify='space-between' px={{ base: 3, md: 4 }} py={1}>
                 <Text
                   fontSize='sm'
                   fontWeight='light'
@@ -253,10 +249,7 @@ const Dashboard = () => {
               {isLoading ? (
                 <>
                   {[...Array(5)].map((_, idx) => (
-                    <Box
-                      key={idx}
-                      width={['100%', '100%', '100%']} // Full width on small screens, half width on larger screens with gap adjustment
-                    >
+                    <Box key={idx} width={['100%', '100%', '100%']}>
                       <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -290,7 +283,7 @@ const Dashboard = () => {
                         isSuccess={isSuccess}
                       />
 
-                      <Divider my={1} _last={{ display: 'none' }} />
+                      <Divider my={0} _last={{ display: 'none' }} />
                     </Fragment>
                   ))}
                 </>
@@ -298,78 +291,6 @@ const Dashboard = () => {
             </Box>
           </Flex>
         </Center>
-        {/* Second dashboard design */}
-        {/* <Box>
-        <Heading as='h2' textAlign='center'>
-          All servers
-        </Heading>
-        <Tabs
-          width='100%'
-          justifyContent='center'
-          maxW={{ xl: 'container.xl' }}
-          variant='enclosed'
-          align='center'
-          isLazy
-        >
-          <TabList gap={2}>
-            {difficultyLevels.map((difficulty, index) => (
-              <Tab
-                _selected={{
-                  color:
-                    diffBadgeColorArr[difficulty].variant === 'white'
-                      ? 'black'
-                      : 'white',
-                  bg: diffBadgeColorArr[difficulty].variant,
-                }}
-                textTransform='uppercase'
-                color={`${colorMode === 'dark' ? 'white' : 'black'}`}
-                fontSize='xl'
-                key={index}
-                backgroundColor={`${
-                  colorMode === 'dark' ? 'whiteAlpha.100' : 'blackAlpha.100'
-                }`}
-              >
-                {difficulty ? difficulty : 'Phase 1'}
-              </Tab>
-            ))}
-          </TabList>
-          <TabPanels>
-            {filteredServersByDifficulty.map((serversByDifficulty, index) => (
-              <TabPanel key={index} width='100%' px={'0'}>
-                {isSuccess ? (
-                  serversByDifficulty.map((server: Server, idx) => {
-                    const modifiedServer: Server = {
-                      ...server,
-                      timeLeft:
-                        counter[servers.indexOf(server)] - mapChangeEstimate,
-                    };
-                    return (
-                      <Box
-                        key={idx}
-                        width={['100%', '100%', '100%']} // Full width on small screens, half width on larger screens with gap adjustment
-                        marginBottom={['8px', '8px', '0']} // Add bottom margin to create space between rows on small screens
-                      >
-                        <motion.div
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          transition={{ duration: 0.5, delay: idx * 0.1 }}
-                        >
-                          <ServerCard
-                            {...modifiedServer}
-                            key={server.serverNumber}
-                          />
-                        </motion.div>
-                      </Box>
-                    );
-                  })
-                ) : (
-                  <div>Loading...</div>
-                )}
-              </TabPanel>
-            ))}
-          </TabPanels>
-        </Tabs>
-      </Box> */}
       </motion.div>
     );
   }

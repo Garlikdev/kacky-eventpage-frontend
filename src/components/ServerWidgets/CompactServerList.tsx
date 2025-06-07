@@ -20,7 +20,8 @@ import EventContext from '@/context/EventContext';
 import { diffBadgeColorArr, getDefaultBackgrounds } from '@/utils/theme';
 import { NavLink } from 'react-router-dom';
 import MapImageModal from '../MapImageModal';
-import { MdOutlineArrowRight } from 'react-icons/md';
+import ServerNumberBox from './ServerNumberBox';
+import MapLoadingOrList from './MapLoadingOrList';
 
 // eslint-disable-next-line no-unused-vars
 const CompactServerList = ({
@@ -45,23 +46,8 @@ const CompactServerList = ({
   const nextMapModals = [modalNextMap1, modalNextMap2, modalNextMap3];
 
   const imageUrl = getMapImageUrl(event.type, maps[0].number);
-  // const imageUrl = getMapImageUrl('kr', 250);
 
   const divRef = useRef<HTMLDivElement>(null);
-  // const [dimensions, setDimensions] = useState({
-  //   width: 0,
-  //   height: 0,
-  //   top: 0,
-  //   left: 0,
-  // });
-
-  // useEffect(() => {
-  //   if (!divRef.current) return;
-
-  //   const { width, height, top, left } = divRef.current.getBoundingClientRect();
-
-  //   setDimensions({ width, height, top, left });
-  // }, []);
   return (
     <Box
       // Image fallback doesn't work for some reason for bgImage
@@ -70,155 +56,15 @@ const CompactServerList = ({
       bgRepeat='no-repeat'
       bgSize='cover'
       w='full'
-      h='full'
+      h='4rem'
       ref={divRef}
     >
-      {/* <AnimatePresence>
-        {timeLeft === 0 && (
-          <motion.div
-            key={serverNumber + 'loader'}
-            style={{ position: 'absolute', zIndex: 5 }}
-            initial={{
-              opacity: 0,
-            }}
-            animate={{
-              opacity: [0, 1, 0],
-            }}
-            exit={{
-              opacity: 0,
-              transition: { ease: 'easeOut', duration: 0.3 },
-            }}
-            transition={{
-              duration: 3,
-              repeat: Infinity,
-              ease: 'easeInOut',
-            }}
-          >
-            <Box
-              bg={colorMode === 'dark' ? 'neutral.400' : 'neutral.700'}
-              position='absolute'
-              zIndex={5}
-              opacity={0.1}
-              h={dimensions.height + 'px'}
-              w={dimensions.width}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence> */}
-      {/* <AnimatePresence>
-        {timeLeft === 0 && (
-          <motion.svg
-            style={{ position: 'absolute', zIndex: 5 }}
-            width={dimensions.width + 'px'}
-            height={dimensions.height + 'px'}
-            viewBox={`0 0 ${dimensions.width + 0} ${dimensions.height}`}
-            fill='none'
-            xmlns='http://www.w3.org/2000/svg'
-            initial={{
-              opacity: 0,
-            }}
-            animate={{
-              opacity: 1,
-            }}
-            exit={{
-              opacity: 0,
-              transition: { ease: 'easeOut', duration: 0.3 },
-            }}
-          >
-            <defs>
-              <filter
-                id='neon'
-                filterUnits='userSpaceOnUse'
-                x='-50%'
-                y='-50%'
-                width='200%'
-                height='200%'
-              >
-                <feGaussianBlur
-                  in='SourceGraphic'
-                  stdDeviation='5'
-                  result='blur5'
-                />
-                <feGaussianBlur
-                  in='SourceGraphic'
-                  stdDeviation='10'
-                  result='blur10'
-                />
-                <feGaussianBlur
-                  in='SourceGraphic'
-                  stdDeviation='20'
-                  result='blur20'
-                />
-                <feGaussianBlur
-                  in='SourceGraphic'
-                  stdDeviation='30'
-                  result='blur30'
-                />
-                <feGaussianBlur
-                  in='SourceGraphic'
-                  stdDeviation='50'
-                  result='blur50'
-                />
-
-                <feMerge result='blur-merged'>
-                  <feMergeNode in='blur10' />
-                  <feMergeNode in='blur20' />
-                  <feMergeNode in='blur30' />
-                  <feMergeNode in='blur50' />
-                </feMerge>
-
-                <feColorMatrix
-                  result='red-blur'
-                  in='blur-merged'
-                  type='matrix'
-                  values='1 0 0 0 0
-                      0 0.06 0 0 0
-                      0 0 0.44 0 0
-                      0 0 0 1 0'
-                />
-                <feMerge>
-                  <feMergeNode in='red-blur' />
-                  <feMergeNode in='blur5' />
-                  <feMergeNode in='SourceGraphic' />
-                </feMerge>
-              </filter>
-            </defs>
-
-            <svg
-              className='neon'
-              style={{ filter: 'url(#neon)', zIndex: 5 }}
-              x={0}
-              y={0}
-            >
-              <motion.path
-                d={`M 0 0 h ${dimensions.width} v ${dimensions.height} h -${dimensions.width} v -${dimensions.height}`}
-                stroke='LightSteelBlue'
-                strokeWidth='2'
-                animate={{
-                  pathLength: [0, 1],
-                  pathOffset: [0, 0],
-                  opacity: [0, 1, 0],
-                }}
-                transition={{
-                  duration: 3,
-                  repeat: Infinity,
-                  ease: 'easeInOut',
-                  repeatType: 'loop',
-                }}
-              />
-            </svg>
-          </motion.svg>
-        )}
-      </AnimatePresence> */}
-
       {/* SERVER */}
       <Center w='full' h='full'>
-        <Flex
-          direction='row'
-          align='center'
-          justify='space-between'
+        <HStack
           position='relative'
-          w='full' // Image fallback doesn't work for some reason with bgImage
+          w='full'
+          h='full'
           bgImage={`url(${imageUrl})`}
           bgColor={`${colorMode === 'dark' ? 'black' : 'white'}`}
           bgPosition='center'
@@ -228,12 +74,12 @@ const CompactServerList = ({
           p={0}
           // filter={timeLeft < 3 ? 'grayscale(100%)' : 'grayscale(0%)'}
         >
-          <Flex
-            direction='row'
-            align='center'
+          <HStack
+            align='stretch'
             justify='space-between'
             position='relative'
             w='full'
+            h='full'
             px={{ base: 2, md: 3 }}
             bgColor={`${
               colorMode === 'dark'
@@ -241,20 +87,6 @@ const CompactServerList = ({
                 : getDefaultBackgrounds().light[0]
             }99`}
           >
-            {/* <Image
-            src={getMapImageUrl(event.type, maps[0].number)}
-            onClick={onOpen}
-            cursor='pointer'
-            _hover={{ transform: 'scale(1.05)' }}
-            transition='transform 0.1s ease-in-out'
-            // fallback={IMAGES.mapImageFallback}
-            h='full'
-            w='full'
-            objectFit='cover'
-            position='absolute'
-            rounded='1rem'
-            filter={timeLeft < 3 ? 'grayscale(100%)' : 'grayscale(0%)'}
-          /> */}
             {serverDifficulty !== '' ? ( // Servers do not have a difficulty in Phase 1
               <Badge
                 w={'0.5rem'}
@@ -267,146 +99,19 @@ const CompactServerList = ({
                 variant={diffBadgeColorArr[serverDifficulty].variant}
               ></Badge>
             ) : null}
-            <HStack gap={2} pl={1}>
-              <Box position='relative' alignContent={'center'} w={'3rem'}>
-                <Text
-                  fontWeight='medium'
-                  fontSize={'xl'}
-                  rounded='full'
-                  filter={timeLeft < 1 ? 'grayscale(100%)' : 'grayscale(0%)'}
-                  transition='transform 1s ease-in-out'
-                  textAlign={'center'}
-                >
-                  #{serverNumber}
-                </Text>
-              </Box>
-              <VStack
-                gap='1'
-                align='start'
-                lineHeight={0.75}
-                textTransform='initial'
-              >
-                <AnimatePresence mode='wait'>
-                  {isSuccess ? (
-                    // Show loading only when timer exists AND is less than 3
-                    timeLeft !== undefined &&
-                    timeLeft !== null &&
-                    timeLeft < 3 ? (
-                      <motion.div
-                        key={'mapnumberloadingserver'}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ ease: 'easeInOut', duration: 0.3 }}
-                      >
-                        <Text
-                          as='span'
-                          fontWeight='bold'
-                          fontSize={{ base: 'sm', md: 'lg' }}
-                          color={colorMode === 'dark' ? 'blue.500' : 'blue.500'}
-                          filter={
-                            colorMode === 'dark'
-                              ? theme.shadows.dropGlowDark
-                              : theme.shadows.dropGlow
-                          }
-                        >
-                          Loading {maps[1]?.number ?? ''} ...
-                        </Text>
-                      </motion.div>
-                    ) : (
-                      // Show maps when timer is >= 3 OR timer is unknown/undefined
-                      <motion.div
-                        key={'mapnumberready'}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ ease: 'easeInOut', duration: 0.3 }}
-                      >
-                        <HStack
-                          gap={{ base: '0', md: '1' }}
-                          color={
-                            colorMode === 'dark' ? 'neutral.100' : 'neutral.900'
-                          }
-                          align='end'
-                          alignItems='center'
-                          fontSize={{ base: 'xl', md: '2xl' }}
-                          onClick={onOpen}
-                          cursor='pointer'
-                          position='relative'
-                          _hover={{ transform: 'scale(1.05)' }}
-                          transition='transform 0.1s ease-in-out'
-                        >
-                          <Text
-                            as='span'
-                            fontWeight='bold'
-                            color={
-                              maps[0].finished
-                                ? colorMode === 'dark'
-                                  ? 'green.300'
-                                  : 'green.500'
-                                : ''
-                            }
-                            filter={
-                              maps[0].finished
-                                ? colorMode === 'dark'
-                                  ? theme.shadows.finGlowDark
-                                  : theme.shadows.finGlowLight
-                                : colorMode === 'dark'
-                                  ? theme.shadows.dropGlowDark
-                                  : theme.shadows.dropGlow
-                            }
-                          >
-                            {maps[0].number}
-                          </Text>
-                          <MdOutlineArrowRight
-                            fontWeight='bold'
-                            filter={
-                              colorMode === 'dark'
-                                ? theme.shadows.dropGlowDark
-                                : theme.shadows.dropGlow
-                            }
-                          />
-                          <Text
-                            as='span'
-                            fontWeight='bold'
-                            color={
-                              maps[1].finished
-                                ? colorMode === 'dark'
-                                  ? 'green.300'
-                                  : 'green.500'
-                                : ''
-                            }
-                            filter={
-                              maps[1].finished
-                                ? colorMode === 'dark'
-                                  ? theme.shadows.finGlowDark
-                                  : theme.shadows.finGlowLight
-                                : colorMode === 'dark'
-                                  ? theme.shadows.dropGlowDark
-                                  : theme.shadows.dropGlow
-                            }
-                          >
-                            {maps[1].number}
-                          </Text>
-                          <Text
-                            fontSize='xs'
-                            position={{ base: 'absolute' }}
-                            top={{ base: '1.8rem' }}
-                            display={{ base: 'none', sm: 'block' }}
-                            filter={
-                              colorMode === 'dark'
-                                ? theme.shadows.dropGlowDark
-                                : theme.shadows.dropGlow
-                            }
-                          >
-                            {maps[0].author}
-                          </Text>
-                        </HStack>
-                      </motion.div>
-                    )
-                  ) : null}
-                </AnimatePresence>
-              </VStack>
+            <HStack gap={2} h='full' align='stretch'>
+              <ServerNumberBox
+                serverNumber={serverNumber}
+                colorMode={colorMode}
+              />
+              <MapLoadingOrList
+                isSuccess={isSuccess}
+                timeLeft={timeLeft}
+                maps={maps}
+                colorMode={colorMode}
+                theme={theme}
+                onOpen={onOpen}
+              />
             </HStack>
             <HStack
               w='fit-content'
@@ -509,7 +214,8 @@ const CompactServerList = ({
                             onClick={nextMapModals[index].onOpen}
                             cursor='pointer'
                             _hover={{ transform: 'scale(1.1)' }}
-                            fontWeight={'bold'}
+                            fontWeight={'medium'}
+                            fontSize={{ base: 'sm', md: 'sm' }}
                             transition='transform 0.1s ease-in-out'
                             color={
                               map.finished
@@ -573,8 +279,6 @@ const CompactServerList = ({
                       {playerCount}/100
                     </Text>
                   </motion.div>
-                </AnimatePresence>
-                <AnimatePresence mode='wait'>
                   <motion.div
                     key={'mapjoinloading'}
                     initial={{ opacity: 0 }} // Start with 0 opacity
@@ -597,7 +301,7 @@ const CompactServerList = ({
                           position='relative'
                           w='fit'
                           fontSize={'xs'}
-                          h='2rem'
+                          h='1.5rem'
                           p={1}
                           _hover={{
                             bg:
@@ -628,8 +332,8 @@ const CompactServerList = ({
                 </AnimatePresence>
               </VStack>
             </HStack>
-          </Flex>
-        </Flex>
+          </HStack>
+        </HStack>
       </Center>
       <MapImageModal
         mapNumber={maps[0].number}

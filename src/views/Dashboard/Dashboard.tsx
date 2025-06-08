@@ -56,11 +56,20 @@ const Dashboard = () => {
 
   // Fetch servers data
   const { data, isSuccess, isLoading, isError } = useQuery({
-    queryKey: ['servers', authentication.token],
+    queryKey: authentication.token
+      ? ['dashboardServers', authentication.token]
+      : ['dashboardServers'],
     queryFn: () => getDashboardData(authentication.token),
     refetchOnWindowFocus: true,
     refetchInterval: 30000,
-    retry: true,
+    retry: 1,
+    retryDelay: failureCount => {
+      // Increment the count for each retry
+      newQueryCount.current[failureCount] =
+        (newQueryCount.current[failureCount] || 0) + 1;
+      // Return a delay based on the number of retries
+      return Math.min(1000 * newQueryCount.current[failureCount], 10000); // Max delay of 10 seconds
+    },
   });
 
   // Timer for days left till comp end
@@ -129,8 +138,11 @@ const Dashboard = () => {
     return (
       <Center>
         <VStack>
-          <Text fontSize='2xl'>Kacky servers are down for maintenance.</Text>
+          <Text fontSize='2xl'>
+            Kacky servers are having connection issues.
+          </Text>
           <Text fontSize='xl'>We are working on a fix.</Text>
+          <Text fontSize='sm'>We'll retry to reconnect you.</Text>
           <Text>Thank you for your patience and see you soon.</Text>
         </VStack>
       </Center>

@@ -99,7 +99,7 @@ const CompactServerList = ({
                 variant={diffBadgeColorArr[serverDifficulty].variant}
               ></Badge>
             ) : null}
-            <HStack gap={2} h='full' align='stretch'>
+            <HStack gap={2} h='full' align='center'>
               <ServerNumberBox
                 serverNumber={serverNumber}
                 colorMode={colorMode}
